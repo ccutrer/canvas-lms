@@ -637,6 +637,9 @@ class Attachment < ActiveRecord::Base
        'Policy' => policy_encoded,
        'Signature' => signature,
     })
+    if Attachment.local_storage? && options[:authenticity_token]
+      res[:upload_params].merge!(options[:authenticity_token])
+    end
     extras.map(&:to_a).each{ |extra| res[:upload_params][extra.first.first] = extra.first.last }
     res
   end

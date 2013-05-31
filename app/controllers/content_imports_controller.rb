@@ -83,7 +83,8 @@ class ContentImportsController < ApplicationController
                                           :uuid => att.uuid, :include_host => true),
               :max_size => 5.gigabytes,
               :file_param => :export_file,
-              :ssl => request.ssl?)
+              :ssl => request.ssl?,
+              :authenticity_token => { request_forgery_protection_token => form_authenticity_token })
             render :json => upload_params
           else
             @migration.export_content

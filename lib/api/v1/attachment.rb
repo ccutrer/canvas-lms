@@ -104,7 +104,8 @@ module Api::V1::Attachment
       json = @attachment.ajax_upload_params(@current_pseudonym,
                                                      api_v1_files_create_url(:on_duplicate => duplicate_handling, :quota_exemption => quota_exemption),
                                                      api_v1_files_create_success_url(@attachment, :uuid => @attachment.uuid, :on_duplicate => duplicate_handling, :quota_exemption => quota_exemption),
-                                                     :ssl => request.ssl?, :file_param => opts[:file_param]).
+                                                     :ssl => request.ssl?, :file_param => opts[:file_param],
+                                                     :authenticity_token => { request_forgery_protection_token => form_authenticity_token }).
       slice(:upload_url,:upload_params,:file_param,:remote_url)
     end
 

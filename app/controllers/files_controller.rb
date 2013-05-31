@@ -527,7 +527,8 @@ class FilesController < ApplicationController
                 'attachment[unattached_attachment_id]' => @attachment.id,
                 'check_quota_after' => @check_quota ? '1' : '0'
               },
-              :ssl => request.ssl?)
+              :ssl => request.ssl?,
+              :authenticity_token => { request_forgery_protection_token => form_authenticity_token })
       render :json => res.to_json
     end
   end
