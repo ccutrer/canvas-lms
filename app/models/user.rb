@@ -1472,7 +1472,8 @@ class User < ActiveRecord::Base
     opts = {limit: 15}.merge(opts.slice(:limit))
 
     shard.activate do
-      Rails.cache.fetch([self, 'assignments_needing_grading', course_ids, opts].cache_key, expires_in: 15.minutes) do
+      real_res = nil
+      result = Rails.cache.fetch([self, 'assignments_needing_grading', course_ids, opts].cache_key, expires_in: 15.minutes) do
         Shackles.activate(:slave) do
           limit = opts[:limit]
 
@@ -1486,9 +1487,26 @@ class User < ActiveRecord::Base
           end
           # outer limit, since there could be limit * n_shards results
           result = result[0...limit] if limit
+          begin
+            Marshal.dump(result)
+          rescue
+            ActiveRecord::Base.class_eval do
+              alias_method :old_to_yaml, :to_yaml
+              remove_method :to_yaml
+            end
+            additional_data = {result: result.to_yaml}
+            ActiveRecord::Base.class_eval do
+              alias_method :to_yaml, :old_to_yaml
+            end
+            ErrorReport.log_exception(:cached_current_enrollments, $!, additional_data)
+
+            real_res = result
+            result = nil
+          end
           result
         end
       end
+      result ||= real_res
     end
   end
 
