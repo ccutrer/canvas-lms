@@ -1488,7 +1488,7 @@ class User < ActiveRecord::Base
           # outer limit, since there could be limit * n_shards results
           result = result[0...limit] if limit
           begin
-            Marshal.dump(result)
+            Marshal.load(Marshal.dump(result))
           rescue
             ActiveRecord::Base.class_eval do
               alias_method :old_to_yaml, :to_yaml
@@ -1722,7 +1722,7 @@ class User < ActiveRecord::Base
           res.uniq!
         end
         begin
-          Marshal.dump(res)
+          Marshal.load(Marshal.dump(res))
         rescue
           ActiveRecord::Base.class_eval do
             alias_method :old_to_yaml, :to_yaml
