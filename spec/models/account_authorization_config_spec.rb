@@ -145,5 +145,4 @@ describe AccountAuthorizationConfig do
       expect(aac3.reload.position).to eq(2)
     end
   end
-
 end
