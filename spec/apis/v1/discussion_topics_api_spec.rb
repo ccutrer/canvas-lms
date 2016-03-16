@@ -2148,6 +2148,7 @@ describe DiscussionTopicsController, type: :request do
         Timecop.travel(Time.now + 20.seconds)
         run_jobs
 
+        @reply3.user.any_instantiation.expects(:account).never
         json = api_call(:get, "/api/v1/courses/#{@course.id}/discussion_topics/#{@topic.id}/view",
                   { :controller => "discussion_topics_api", :action => "view", :format => "json", :course_id => @course.id.to_s, :topic_id => @topic.id.to_s })
 

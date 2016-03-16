@@ -157,12 +157,14 @@ module Api::V1::User
       when nil, false
         user_url(user)
       else
+        root_account = parent_context.root_account
         polymorphic_url([parent_context, user])
       end
     hash = {
       id: user.id,
       display_name: user.short_name,
-      avatar_image_url: avatar_url_for_user(user, blank_fallback),
+      avatar_image_url: avatar_url_for_user(user, blank_fallback,
+                                            root_account: root_account),
       html_url: participant_url
     }
     hash[:fake_student] = true if user.fake_student?
